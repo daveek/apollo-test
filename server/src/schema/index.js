@@ -6,8 +6,13 @@ const typeDefs = `
     url: String!
     description: String!
   }
+
+  type Query {
+    links: [Link!]!
+  }
 `
 
 module.exports = makeExecutableSchema({
   typeDefs,
+  resolvers: require('./resolvers'),
 })
