@@ -1,14 +1,20 @@
 const { makeExecutableSchema } = require('graphql-tools')
 
 const typeDefs = `
-  type Link {
+  type User {
     id: ID!
-    url: String!
-    description: String!
+    username: String!
+  }
+
+  type Room {
+    id: ID!
+    name: String!
+    users: [User]
   }
 
   type Query {
-    links: [Link!]!
+    users: [User!]!
+    rooms: [Room!]!
   }
 `
 
