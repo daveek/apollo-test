@@ -18,6 +18,7 @@ const typeDefs = `
     user: User
     channel: Channel
     content: String
+    createdAt: Float
   }
 
   type Query {

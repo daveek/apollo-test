@@ -15,6 +15,7 @@ const Messages = {
       content,
       channelId,
       userId,
+      createdAt: Date.now(),
     }
     MOCK_MESSAGES.set(message.id, message)
     return message
