@@ -1,1 +1,1 @@
-exports.uuid = (seed => () => ++seed)(0)
+exports.uuid = (seed => () => `${++seed}`)(0)
