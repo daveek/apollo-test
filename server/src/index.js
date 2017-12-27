@@ -19,4 +19,10 @@ app.use((err, req, res, next) => {
   res.json({ error: err.message })
 })
 
+app.start = async (port) => {
+  return new Promise((resolve, reject) => {
+    app.listen(port, () => resolve())
+  })
+}
+
 module.exports = app
