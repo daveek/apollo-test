@@ -23,6 +23,7 @@ const typeDefs = `
   type Query {
     users: [User!]!
     channels: [Channel!]!
+    channel(id: ID!): Channel
   }
 `
 

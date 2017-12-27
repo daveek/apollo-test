@@ -6,6 +6,7 @@ module.exports = {
   Query: {
     users: Users.list,
     channels: Channels.list,
+    channel: (__, params) => Channels.get(params.id),
   },
   Channel: {
     async users(channel) {
