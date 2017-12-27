@@ -10,6 +10,14 @@ const typeDefs = `
     id: ID!
     name: String!
     users: [User]
+    messages: [Message]
+  }
+
+  type Message {
+    id: ID!
+    room: Room
+    user: User
+    content: String
   }
 
   type Query {
