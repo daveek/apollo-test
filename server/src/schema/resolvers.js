@@ -1,19 +1,19 @@
 const Users = require('../models/users')
-const Rooms = require('../models/rooms')
+const Channels = require('../models/channels')
 const Messages = require('../models/messages')
 
 module.exports = {
   Query: {
     users: Users.list,
-    rooms: Rooms.list,
+    channels: Channels.list,
   },
-  Room: {
-    async users(room) {
-      return Promise.all(room.users.map(id => Users.get(id)))
+  Channel: {
+    async users(channel) {
+      return Promise.all(channel.users.map(id => Users.get(id)))
     },
-    async messages(room) {
+    async messages(channel) {
       // TODO(zuko): this is super naive, only good for demo purposes
-      return (await Messages.list()).filter(m => m.roomId === room.id)
+      return (await Messages.list()).filter(c => c.channelId === channel.id)
     }
   },
   Message: {

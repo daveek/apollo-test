@@ -6,7 +6,7 @@ const typeDefs = `
     username: String!
   }
 
-  type Room {
+  type Channel {
     id: ID!
     name: String!
     users: [User]
@@ -15,14 +15,14 @@ const typeDefs = `
 
   type Message {
     id: ID!
-    room: Room
     user: User
+    channel: Channel
     content: String
   }
 
   type Query {
     users: [User!]!
-    rooms: [Room!]!
+    channels: [Channel!]!
   }
 `
 

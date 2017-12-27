@@ -9,11 +9,11 @@ const Messages = {
   async get(id) {
     return MOCK_MESSAGES.find(m => m.id === id)
   },
-  async create(content, roomId, userId) {
+  async create(content, channelId, userId) {
     const message = {
       id: uuid(),
       content,
-      roomId,
+      channelId,
       userId,
     }
     MOCK_MESSAGES.set(message.id, message)
