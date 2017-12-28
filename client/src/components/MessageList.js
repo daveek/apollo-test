@@ -1,5 +1,5 @@
-import faker from 'faker'
 import moment from 'moment'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { Feed } from 'semantic-ui-react'
 
@@ -10,6 +10,20 @@ const style = {
 }
 
 class MessageList extends React.PureComponent {
+  static propTypes = {
+    messages: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        user: PropTypes.shape({
+          avatarURL: PropTypes.string.isRequired,
+          username: PropTypes.string.isRequired,
+        }).isRequired,
+        createdAt: PropTypes.number.isRequired,
+        content: PropTypes.string.isRequired,
+      }),
+    ),
+  }
+
   componentDidMount() {
     this.scrollToBottom()
   }
@@ -24,7 +38,7 @@ class MessageList extends React.PureComponent {
   render() {
     const messages = this.props.messages.map(message => ({
       key: message.id,
-      image: faker.image.avatar(),
+      image: message.user.avatarURL,
       summary: {
         content: message.user.username,
         date: moment(message.createdAt).fromNow(),

@@ -54,10 +54,12 @@ const getMessagesForChannel = channelId => {
         id,
         name,
         messages {
+          id,
           content,
           createdAt,
           user {
             id,
+            avatarURL,
             username,
           },
         }
@@ -124,7 +126,8 @@ class App extends Component {
         }
       }
     `
-    const res = await fetch('http://localhost:4000/graphql', {
+
+    await fetch('http://localhost:4000/graphql', {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
