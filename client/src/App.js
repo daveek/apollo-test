@@ -1,6 +1,4 @@
-import faker from 'faker'
 import _ from 'lodash/fp'
-import moment from 'moment'
 import React, { Component } from 'react'
 import { Form, Grid, Header } from 'semantic-ui-react'
 
@@ -57,7 +55,11 @@ const getMessagesForChannel = channelId => {
         name,
         messages {
           content,
-          createdAt
+          createdAt,
+          user {
+            id,
+            username,
+          },
         }
       }
     }`,
@@ -77,7 +79,7 @@ class App extends Component {
     this.fetchChannels()
   }
 
-  fetchChannels = async () => {
+  async fetchChannels() {
     const channels = await getChannelList()
     const activeChannelId = this.state.activeChannelId || channels[0].id
 
@@ -86,21 +88,10 @@ class App extends Component {
     })
   }
 
-  fetchMessages = async () => {
+  async fetchMessages() {
     const { activeChannelId } = this.state
 
-    const messages = await getMessagesForChannel(activeChannelId)
-    this.setState({
-      messages: messages.map(message => ({
-        key: message.id,
-        image: faker.image.avatar(),
-        summary: {
-          content: message.user,
-          date: moment(message.createdAt).fromNow(),
-        },
-        extraText: message.content,
-      })),
-    })
+    this.setState({ messages: await getMessagesForChannel(activeChannelId) })
   }
 
   handleSelectChannel = channelId => {
@@ -113,8 +104,35 @@ class App extends Component {
     this.setState({ message: e.target.value })
   }
 
-  handleSubmitMessage = e => {
-    e.preventDefault()
+  // TODO(zuko): this is just for POC, make key handling not terrible
+  handleNewMessageKeyPress = e => {
+    const { message } = this.state
+    if (e.key !== 'Enter') return
+
+    this.setState({ message: '' })
+    this.createMessage(message.replace(/\n/g, '')) // TODO(zuko): remove this newline hack
+  }
+
+  createMessage = async message => {
+    const userId = this.state.messages[0].user.id // TODO(zuko): use an actual user
+    const channelId = this.state.activeChannelId
+    const query = `
+      mutation {
+        createMessage(content: "${message}", userId: "${userId}", channelId: "${channelId}") {
+          id,
+          content,
+        }
+      }
+    `
+    const res = await fetch('http://localhost:4000/graphql', {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({ query }),
+    })
+    this.fetchMessages()
   }
 
   render() {
@@ -137,12 +155,13 @@ class App extends Component {
         </Grid.Column>
         <Grid.Column>
           <MessageList messages={messages} />
-          <Form style={inputFormStyle} onSubmit={this.handleSubmitMessage}>
+          <Form style={inputFormStyle}>
             <Form.TextArea
               autoHeight
               rows={1}
               value={message}
               onChange={this.handleNewMessageChange}
+              onKeyUp={this.handleNewMessageKeyPress}
               style={textAreaStyle}
               placeholder="Message channel..."
             />
