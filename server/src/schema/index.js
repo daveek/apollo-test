@@ -26,6 +26,10 @@ const typeDefs = `
     channels: [Channel!]!
     channel(id: ID!): Channel
   }
+
+  type Mutation {
+    createMessage(content: String!, channelId: ID!, userId: ID!): Message
+  }
 `
 
 module.exports = makeExecutableSchema({

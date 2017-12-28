@@ -8,6 +8,11 @@ module.exports = {
     channels: Channels.list,
     channel: (__, params) => Channels.get(params.id),
   },
+  Mutation: {
+    async createMessage(root, { content, channelId, userId }) {
+      return Messages.create(content, channelId, userId)
+    },
+  },
   Channel: {
     async users(channel) {
       return Promise.all(channel.users.map(id => Users.get(id)))
