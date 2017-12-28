@@ -3,6 +3,7 @@ const { makeExecutableSchema } = require('graphql-tools')
 const typeDefs = `
   type User {
     id: ID!
+    avatarURL: String!
     username: String!
   }
 

@@ -1,4 +1,5 @@
 const { uuid } = require('../utils')
+const faker = require('faker')
 
 const MOCK_USERS = []
 
@@ -10,7 +11,7 @@ const Users = {
     return MOCK_USERS.find(u => u.id === id)
   },
   async create(username) {
-    const user = { id: uuid(), username }
+    const user = { id: uuid(), avatarURL: faker.image.avatar(), username }
     MOCK_USERS.push(user)
     return user
   },

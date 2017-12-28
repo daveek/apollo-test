@@ -20,11 +20,11 @@ module.exports = {
     async messages(channel) {
       // TODO(zuko): this is super naive, only good for demo purposes
       return (await Messages.list()).filter(c => c.channelId === channel.id)
-    }
+    },
   },
   Message: {
     async user(message) {
       return Users.get(message.userId)
-    }
+    },
   },
 }
