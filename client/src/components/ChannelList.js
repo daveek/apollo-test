@@ -8,7 +8,7 @@ import ChannelListItem from './ChannelListItem'
 class ChannelList extends Component {
   static propTypes = {
     activeChannelId: PropTypes.string,
-    onChannelClick: PropTypes.func.isRequired,
+    onSelectChannel: PropTypes.func.isRequired,
     channels: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -17,19 +17,16 @@ class ChannelList extends Component {
     ),
   }
 
-  handleChannelClick = channel => () => {
-    _.invokeArgs('onChannelClick', [channel], this.props)
-  }
-
   renderChannelItem = channel => {
-    const { activeChannelId } = this.props
+    const { activeChannelId, onSelectChannel } = this.props
 
     return (
       <ChannelListItem
         key={channel.id}
-        active={activeChannelId && channel.id === activeChannelId}
+        id={channel.id}
+        active={channel.id === activeChannelId}
         name={channel.name}
-        onClick={this.handleChannelClick(channel)}
+        onClick={onSelectChannel}
       />
     )
   }

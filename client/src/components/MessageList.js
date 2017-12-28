@@ -1,6 +1,3 @@
-import faker from 'faker'
-import _ from 'lodash/fp'
-import moment from 'moment'
 import React, { Component } from 'react'
 import { Feed } from 'semantic-ui-react'
 
@@ -9,18 +6,6 @@ const style = {
   overflowY: 'auto',
   paddingBottom: '1em',
 }
-
-const getMessage = index => ({
-  key: index,
-  image: faker.image.avatar(),
-  summary: {
-    content: faker.internet.userName(),
-    date: moment(Date.now() - index * 100000).fromNow(),
-  },
-  extraText: faker.hacker.phrase(),
-})
-
-const getMessageList = () => _.times(getMessage, 20).reverse()
 
 class MessageList extends Component {
   componentDidMount() {
@@ -35,7 +20,8 @@ class MessageList extends Component {
   }
 
   render() {
-    return <Feed id="message-list" events={getMessageList()} style={style} />
+    const { messages } = this.props
+    return <Feed id="message-list" events={messages} style={style} />
   }
 }
 

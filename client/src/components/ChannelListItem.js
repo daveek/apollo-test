@@ -4,13 +4,18 @@ import { List } from 'semantic-ui-react'
 
 class ChannelListItem extends Component {
   static propTypes = {
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     active: PropTypes.bool,
     onClick: PropTypes.func,
   }
 
+  handleClick = () => {
+    this.props.onClick(this.props.id)
+  }
+
   render() {
-    const { active, name, onClick } = this.props
+    const { active, name } = this.props
 
     return (
       <List.Item
@@ -18,7 +23,7 @@ class ChannelListItem extends Component {
         icon="hashtag"
         content={name}
         active={active}
-        onClick={onClick}
+        onClick={this.handleClick}
       />
     )
   }

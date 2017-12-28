@@ -67,53 +67,58 @@ const getMessagesForChannel = channelId => {
 }
 
 class App extends Component {
-  state = {}
-
-  async componentDidMount() {
-    await this.fetchChannels()
+  state = {
+    message: '',
+    messages: [],
+    activeChannelId: null,
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.activeChannelId !== this.state.activeChannelId) {
-      this.fetchMessages()
-    }
+  componentDidMount() {
+    this.fetchChannels()
   }
 
   fetchChannels = async () => {
     const channels = await getChannelList()
     const activeChannelId = this.state.activeChannelId || channels[0].id
 
-    this.setState({ activeChannelId, channels })
+    this.setState({ activeChannelId, channels }, () => {
+      this.fetchMessages()
+    })
   }
 
   fetchMessages = async () => {
     const { activeChannelId } = this.state
 
-    if (!activeChannelId) {
-      return this.setState({ messages: [] })
-    }
-
-    const messages = (await getMessagesForChannel(activeChannelId)).map(
-      ({ id, createdAt, user, content }) => {
-        return {
-          key: id,
-          image: faker.image.avatar(),
-          summary: {
-            content: user,
-            date: moment(createdAt).fromNow(),
-          },
-          extraText: content,
-        }
-      },
-    )
-
-    this.setState({ messages })
+    const messages = await getMessagesForChannel(activeChannelId)
+    this.setState({
+      messages: messages.map(message => ({
+        key: message.id,
+        image: faker.image.avatar(),
+        summary: {
+          content: message.user,
+          date: moment(message.createdAt).fromNow(),
+        },
+        extraText: message.content,
+      })),
+    })
   }
 
-  handleChannelClick = ({ id }) => this.setState({ activeChannelId: id })
+  handleSelectChannel = channelId => {
+    this.setState({ activeChannelId: channelId }, () => {
+      this.fetchMessages()
+    })
+  }
+
+  handleNewMessageChange = e => {
+    this.setState({ message: e.target.value })
+  }
+
+  handleSubmitMessage = e => {
+    e.preventDefault()
+  }
 
   render() {
-    const { activeChannelId, channels, messages } = this.state
+    const { activeChannelId, channels, message, messages } = this.state
 
     return (
       <Grid columns="equal" padded stretched style={gridStyle}>
@@ -127,17 +132,18 @@ class App extends Component {
           <ChannelList
             activeChannelId={activeChannelId}
             channels={channels}
-            onChannelClick={this.handleChannelClick}
+            onSelectChannel={this.handleSelectChannel}
           />
         </Grid.Column>
         <Grid.Column>
           <MessageList messages={messages} />
-          <Form style={inputFormStyle}>
+          <Form style={inputFormStyle} onSubmit={this.handleSubmitMessage}>
             <Form.TextArea
-              value={JSON.stringify(this.state, null, 2)}
-              style={textAreaStyle}
               autoHeight
               rows={1}
+              value={message}
+              onChange={this.handleNewMessageChange}
+              style={textAreaStyle}
               placeholder="Message channel..."
             />
           </Form>
