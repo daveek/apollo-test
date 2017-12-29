@@ -9,7 +9,7 @@ const style = {
   paddingBottom: '1em',
 }
 
-class MessageList extends React.PureComponent {
+export class MessageList extends React.PureComponent {
   static propTypes = {
     messages: PropTypes.arrayOf(
       PropTypes.shape({
@@ -36,7 +36,8 @@ class MessageList extends React.PureComponent {
   }
 
   render() {
-    const messages = this.props.messages.map(message => ({
+    const { messages = [] } = this.props
+    const events = messages.map(message => ({
       key: message.id,
       image: message.user.avatarURL,
       summary: {
@@ -45,7 +46,10 @@ class MessageList extends React.PureComponent {
       },
       extraText: message.content,
     }))
-    return <Feed id="message-list" events={messages} style={style} />
+
+    return (
+      <Feed id="message-list" events={events} style={style} />
+    )
   }
 }
 
