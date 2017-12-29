@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { Form, Grid, Header } from 'semantic-ui-react'
 import { ApolloProvider } from 'react-apollo'
-import ChannelList from './components/ChannelList'
-import ChannelMessages from './components/ChannelMessages'
-import httpClient from './resources/apollo-http-client'
+import ChannelList from './ChannelList'
+import ChannelMessages from './ChannelMessages'
+import httpClient from '../resources/apollo-http-client'
 
 const noFlex = { flex: '0 0 auto' }
 
