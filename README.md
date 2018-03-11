@@ -8,7 +8,7 @@
 * Build an Apollo test app which consumes a REST endpoint.
 * The GraphQL queries should be unaware of REST dependencies and not be tainted in any way allowing for a clean break when our dependencies migrate to GraphQL.
 * There should be minimal contained REST knowledge within the Apollo link chain.
-* There should be no errors resulting from missing __typename fields
+* There should be no errors resulting from missing \_\_typename fields
 * Any fields that are queried should be backfilled with null when the REST endpoint responds with undefined.
 
 ## Setup
