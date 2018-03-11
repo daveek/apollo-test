@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const uuid = require('./uuid')
 
 class MockModel {
@@ -9,8 +10,8 @@ class MockModel {
     return this._db.get(id)
   }
 
-  async list() {
-    return [...this._db.values()]
+  async list(filters = {}) {
+    return _.filter([...this._db.values()], _.matches(filters))
   }
 
   async create(data) {

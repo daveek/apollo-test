@@ -9,6 +9,7 @@ app.use(require('./api'))
 
 app.use((err, req, res, next) => {
   if (res.headersSent) return next(err)
+  console.log('got error', err)
   res.status(err.status || 500)
   res.json({ error: err.message })
 })

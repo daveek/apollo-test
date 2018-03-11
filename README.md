@@ -2,6 +2,7 @@
 
 * [Requirements](#requirements)
 * [Setup](#setup)
+* [Notes](#notes)
 
 ## Requirements
 
@@ -36,3 +37,9 @@ yarn start
 # still run each application individually. Simply cd into the desired
 # directory {client,server} and run `yarn start`.
 ```
+
+## Notes
+
+* Would prefer to implement REST wrapper on server if possible in real world
+  * Absolutely nothing would have to change on client after REST dependencies are migrated
+  * Fewer network calls, since server would be responsible for proxying REST API
