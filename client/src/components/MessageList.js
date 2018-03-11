@@ -47,9 +47,7 @@ export class MessageList extends React.PureComponent {
       extraText: message.content,
     }))
 
-    return (
-      <Feed id="message-list" events={events} style={style} />
-    )
+    return <Feed id="message-list" events={events} style={style} />
   }
 }
 

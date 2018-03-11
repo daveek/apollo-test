@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
+  "workspaces": ["client", "server"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bin/start",
+    "lint": "prettier {client,server}/{bin,src}/**/*.js",
+    "lint:check": "npm run lint -- --list-different",
+    "lint:fix": "npm run lint -- --write"
   },
   "repository": {
     "type": "git",

@@ -1,8 +1,7 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 const { PORT = 4000 } = process.env
 const server = require('../src')
-
-;(async function start () {
+;(async function start() {
   console.info('Starting server...')
 
   if (process.env.NODE_ENV === 'development') {
