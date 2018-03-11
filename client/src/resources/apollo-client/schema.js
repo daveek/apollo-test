@@ -1,5 +1,8 @@
 import { makeExecutableSchema } from 'graphql-tools'
-import axios from 'axios'
+import Authors from '../../services/authors'
+import Users from '../../services/users'
+import Books from '../../services/books'
+import BookShelves from '../../services/book-shelves'
 
 const typeDefs = `
   type User {
@@ -42,21 +45,15 @@ const typeDefs = `
   }
 `
 
-const api = axios.create({
-  baseURL: 'http://localhost:4000',
-})
-api.interceptors.response.use(async res => res.data)
-
 const resolvers = {
   Query: {
-    authors: () => api.get('/authors'),
-    books: () => api.get('/books'),
-    users: () => api.get('/users'),
+    users: () => Users.list(),
+    authors: () => Authors.list(),
+    books: () => Books.list(),
+    bookShelves: () => BookShelves.list(),
   },
   Author: {
-    books: ({ id: authorId }) => {
-      return api.get(`/authors/${authorId}/books`)
-    },
+    books: ({ id: authorId }) => Books.list({ authorId }),
   },
 }
 
