@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 const Users = require('../src/models/user')
 const Authors = require('../src/models/author')
 const Books = require('../src/models/book')
 const BookShelves = require('../src/models/book-shelf')
 
+// Super naive seeding function to get running quickly.
 module.exports = async function seed() {
   // users
   const [David, Levi, Jackie, Amanda] = await Promise.all([

@@ -14,7 +14,7 @@ app.use((err, req, res, next) => {
 })
 
 app.start = port =>
-  new Promise((resolve, reject) => {
+  new Promise(resolve => {
     app.listen(port, resolve)
   })
 
