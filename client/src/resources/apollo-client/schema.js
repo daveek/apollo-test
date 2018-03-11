@@ -5,7 +5,8 @@ const typeDefs = `
   type User {
     id: ID!
     firstName: String
-    lastName: String
+    lastName: String,
+    bookShelves: [BookShelf]
   }
 
   type Author {
