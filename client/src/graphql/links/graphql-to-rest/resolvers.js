@@ -28,7 +28,12 @@ export default {
     bookshelves: ({ id: userId }) => Bookshelves.list({ userId }),
   },
   Mutation: {
-    createBookshelf: async (_, { userId, title, books }) => {
+    addBookToBookshelf: async (_, { id, bookId }) => {
+      // TODO(zuko): should come from Apollo cache. How?
+      const shelf = await Bookshelves.get(id)
+      return Bookshelves.update(id, { bookIds: [...shelf.bookIds, bookId] })
+    },
+    createBookshelf: (_, { userId, title, books }) => {
       return Bookshelves.create({ userId, title, books })
     },
   },

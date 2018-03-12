@@ -125,7 +125,12 @@ const BookshelfQuery = gql`
 const AddBookMutation = gql`
   mutation addBookToBookshelf($id: ID!, $bookId: ID!) {
     addBookToBookshelf(id: $id, bookId: $bookId) {
-      books
+      id
+      title
+      books {
+        id
+        title
+      }
     }
   }
 `
@@ -138,5 +143,7 @@ export default compose(
       ...data.bookshelf,
     }),
   }),
-  graphql(AddBookMutation, { name: 'addBook' }),
+  graphql(AddBookMutation, {
+    name: 'addBook',
+  }),
 )(Bookshelf)

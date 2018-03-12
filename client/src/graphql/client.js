@@ -3,7 +3,9 @@ import { ApolloLink } from 'apollo-link'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import GraphQLToRESTLink from './links/graphql-to-rest'
 
-const cache = new InMemoryCache()
+const cache = new InMemoryCache({
+  dataIdFromObject: o => o.id,
+})
 
 /**
  * When migrating from the REST backend to the GraphQL backend, simply
