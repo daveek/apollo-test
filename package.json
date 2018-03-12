@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "private": true,
-  "workspaces": ["client", "server"],
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
     "start": "node bin/start",
     "lint": "eslint .",
@@ -26,7 +29,7 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.5.1",
-    "prettier-eslint": "^8.3.1",
-    "prettier": "^1.9.2"
+    "prettier": "^1.11.1",
+    "prettier-eslint": "^8.3.1"
   }
 }

@@ -1,30 +1,17 @@
 import React from 'react'
 import { ApolloProvider } from 'react-apollo'
-import client from '../resources/apollo-client'
-import gql from 'graphql-tag'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import AppLayout from './AppLayout'
+import Dashboard from '../views/Dashboard'
 
-const query = gql`
-  query {
-    authors {
-      firstName
-      books {
-        title
-      }
-    }
-  }
-`
-
-const log = res => console.log(JSON.stringify(res, null, 2))
-client.query({ query }).then(log, console.error)
-
-class App extends React.Component {
-  render() {
-    return (
-      <ApolloProvider client={client}>
-        <h1>Hello World</h1>
-      </ApolloProvider>
-    )
-  }
-}
+const App = ({ client }) => (
+  <ApolloProvider client={client}>
+    <Router>
+      <AppLayout>
+        <Route exact path="/" component={Dashboard} />
+      </AppLayout>
+    </Router>
+  </ApolloProvider>
+)
 
 export default App

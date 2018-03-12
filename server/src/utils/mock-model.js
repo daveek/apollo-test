@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const uuid = require('./uuid')
 
 class MockModel {
   constructor() {
@@ -16,7 +15,7 @@ class MockModel {
 
   async create(data) {
     const record = {
-      id: uuid(),
+      id: _.uniqueId(),
       createdAt: Date.now(),
       updatedAt: Date.now(),
       ...data,

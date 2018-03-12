@@ -1,6 +1,6 @@
-const createMockRESTAPI = require('../../utils/mock-rest-api')
-const Authors = require('../../models/author')
-const Books = require('../../models/book')
+const createMockRESTAPI = require('../utils/mock-rest-api')
+const Authors = require('../models/author')
+const Books = require('../models/book')
 
 const routes = createMockRESTAPI(Authors)
 

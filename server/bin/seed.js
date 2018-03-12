@@ -7,7 +7,7 @@ const BookShelves = require('../src/models/book-shelf')
 // Super naive seeding function to get running quickly.
 module.exports = async function seed() {
   // users
-  const [David, Levi, Jackie, Amanda] = await Promise.all([
+  const [David, Levi, Jackie, Kyle] = await Promise.all([
     Users.create({ firstName: 'David', lastName: 'Zukowski' }),
     Users.create({ firstName: 'Levi', lastName: 'Thomason' }),
     Users.create({ firstName: 'Jackie', lastName: 'Kutcher' }),
@@ -20,6 +20,8 @@ module.exports = async function seed() {
     GeorgeOrwell,
     FScottFitzgerald,
     MarkZDanielewski,
+    KurtVonnegut,
+    CormacMcCarthy,
   ] = await Promise.all([
     Authors.create({
       firstName: 'David',
@@ -40,6 +42,14 @@ module.exports = async function seed() {
       middleName: 'Z',
       lastName: 'Danielewski',
     }),
+    Authors.create({
+      firstName: 'Kurt',
+      lastName: 'Vonnegut',
+    }),
+    Authors.create({
+      firstName: 'Cormac',
+      lastName: 'McCarthy',
+    }),
   ])
 
   // books
@@ -49,6 +59,8 @@ module.exports = async function seed() {
     NineteenEightyFour,
     TheGreatGatsby,
     HouseOfLeaves,
+    CatsCradle,
+    NoCountryForOldMen,
   ] = await Promise.all([
     Books.create({ title: 'Infinite Jest', authorId: DavidFosterWallace.id }),
     Books.create({
@@ -58,6 +70,11 @@ module.exports = async function seed() {
     Books.create({ title: '1984', authorId: GeorgeOrwell.id }),
     Books.create({ title: 'The Great Gatsby', authorId: FScottFitzgerald.id }),
     Books.create({ title: 'House of Leaves', authorId: MarkZDanielewski.id }),
+    Books.create({ title: "Cat's Cradle", authorId: KurtVonnegut.id }),
+    Books.create({
+      title: 'No Country for Old Men',
+      authorId: CormacMcCarthy.id,
+    }),
   ])
 
   // book shelves
@@ -72,6 +89,11 @@ module.exports = async function seed() {
         TheGreatGatsby,
         HouseOfLeaves,
       ].map(book => book.id),
+    }),
+    BookShelves.create({
+      title: 'Classics',
+      createdBy: Kyle.id,
+      bookIds: [CatsCradle, NoCountryForOldMen].map(book => book.id),
     }),
   ])
 }
