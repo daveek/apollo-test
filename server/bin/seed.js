@@ -22,6 +22,8 @@ module.exports = async function seed() {
     MarkZDanielewski,
     KurtVonnegut,
     CormacMcCarthy,
+    JamesBradley,
+    PhilipKaputo,
   ] = await Promise.all([
     Authors.create({
       firstName: 'David',
@@ -50,19 +52,36 @@ module.exports = async function seed() {
       firstName: 'Cormac',
       lastName: 'McCarthy',
     }),
+    Authors.create({
+      firstName: 'James',
+      lastName: 'Bradley',
+    }),
+    Authors.create({
+      firstName: 'Philip',
+      lastName: 'Caputo',
+    }),
   ])
 
   // books
   const [
     InfiniteJest,
+    ThePaleKing,
+    ConsiderTheLobster,
     KeepTheAspidistraFlying,
     NineteenEightyFour,
     TheGreatGatsby,
     HouseOfLeaves,
     CatsCradle,
     NoCountryForOldMen,
+    ARumorOfWar,
+    Flyboys,
   ] = await Promise.all([
     Books.create({ title: 'Infinite Jest', authorId: DavidFosterWallace.id }),
+    Books.create({ title: 'The Pale King', authorId: DavidFosterWallace.id }),
+    Books.create({
+      title: 'Consider the Lobster',
+      authorId: DavidFosterWallace.id,
+    }),
     Books.create({
       title: 'Keep the Aspidistra Flying',
       authorId: GeorgeOrwell.id,
@@ -75,6 +94,8 @@ module.exports = async function seed() {
       title: 'No Country for Old Men',
       authorId: CormacMcCarthy.id,
     }),
+    Books.create({ title: 'A Rumor of War', authorId: PhilipKaputo.id }),
+    Books.create({ title: 'Flyboys', authorId: JamesBradley.id }),
   ])
 
   // book shelves
@@ -93,7 +114,37 @@ module.exports = async function seed() {
     BookShelves.create({
       title: 'Classics',
       createdBy: Kyle.id,
-      bookIds: [CatsCradle, NoCountryForOldMen].map(book => book.id),
+      bookIds: [CatsCradle, TheGreatGatsby, NoCountryForOldMen].map(
+        book => book.id,
+      ),
+    }),
+    BookShelves.create({
+      title: 'Dystopian',
+      createdBy: Jackie.id,
+      bookIds: [CatsCradle, NineteenEightyFour].map(book => book.id),
+    }),
+    BookShelves.create({
+      title: 'David Foster Wallace',
+      createdBy: David.id,
+      bookIds: [InfiniteJest, ThePaleKing, ConsiderTheLobster].map(
+        book => book.id,
+      ),
+    }),
+    BookShelves.create({
+      title: 'WWII Biography',
+      createdBy: David.id,
+      bookIds: [ARumorOfWar, Flyboys].map(book => book.id),
+    }),
+    BookShelves.create({
+      title: 'Thought-Provoking',
+      createdBy: David.id,
+      bookIds: [
+        HouseOfLeaves,
+        InfiniteJest,
+        CatsCradle,
+        NineteenEightyFour,
+        ConsiderTheLobster,
+      ].map(book => book.id),
     }),
   ])
 }

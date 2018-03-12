@@ -3,7 +3,7 @@ export default `
     id: ID!
     firstName: String
     lastName: String,
-    bookShelves: [BookShelf]
+    bookshelves: [Bookshelf]
   }
 
   type Author {
@@ -20,7 +20,7 @@ export default `
     author: Author
   }
 
-  type BookShelf {
+  type Bookshelf {
     id: ID!
     title: String
     createdBy: User
@@ -29,13 +29,24 @@ export default `
   }
 
   type Query {
+    user(id: ID!): User
     users: [User]
+    author(id: ID!): Author
     authors: [Author]
+    book(id: ID!): Book
     books: [Book]
-    bookShelves: [BookShelf]
+    bookshelf(id: ID!): Bookshelf
+    bookshelves: [Bookshelf]
+  }
+
+  type Mutation {
+    createBookshelf(userId: ID!, title: String!, books: [ID!]): Bookshelf
+    addBookToBookshelf(id: ID!, bookId: ID!): Bookshelf
+    removeBookFromBookshelf(id: ID!, bookId: ID!): Bookshelf
   }
 
   schema {
     query: Query
+    mutation: Mutation
   }
 `

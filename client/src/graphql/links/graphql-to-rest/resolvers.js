@@ -1,14 +1,18 @@
 import Authors from '../../../services/authors'
 import Users from '../../../services/users'
 import Books from '../../../services/books'
-import BookShelves from '../../../services/book-shelves'
+import Bookshelves from '../../../services/book-shelves'
 
 export default {
   Query: {
+    user: (_, { id }) => Users.get(id),
     users: () => Users.list(),
+    author: (_, { id }) => Authors.get(id),
     authors: () => Authors.list(),
+    book: (_, { id }) => Books.get(id),
     books: () => Books.list(),
-    bookShelves: () => BookShelves.list(),
+    bookshelf: (_, { id }) => Bookshelves.get(id),
+    bookshelves: () => Bookshelves.list(),
   },
   Author: {
     books: ({ id: authorId }) => Books.list({ authorId }),
@@ -16,11 +20,16 @@ export default {
   Book: {
     author: ({ authorId }) => Authors.get(authorId),
   },
-  BookShelf: {
+  Bookshelf: {
     books: ({ bookIds }) => Promise.all(bookIds.map(id => Books.get(id))),
     createdBy: ({ createdBy }) => Users.get(createdBy),
   },
   User: {
-    bookShelves: ({ id: userId }) => Books.list({ userId }),
+    bookshelves: ({ id: userId }) => Bookshelves.list({ userId }),
+  },
+  Mutation: {
+    createBookshelf: async (_, { userId, title, books }) => {
+      return Bookshelves.create({ userId, title, books })
+    },
   },
 }
