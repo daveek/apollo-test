@@ -1,8 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import 'semantic-ui-css/semantic.min.css'
 import App from './components/App'
-import registerServiceWorker from './registerServiceWorker'
+import client from './graphql/client'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'react-select/dist/react-select.css'
+import './index.css'
 
-ReactDOM.render(<App />, document.getElementById('root'))
-registerServiceWorker()
+const render = () => {
+  ReactDOM.render(<App client={client} />, document.getElementById('root'))
+}
+
+if (module.hot) {
+  module.hot.accept(['./components/App', './graphql/client'], () => {
+    ReactDOM.unmountComponentAtNode(document.getElementById('root'))
+    render()
+  })
+}
+
+render()

@@ -1,24 +1,14 @@
 const express = require('express')
-const ApolloServer = require('apollo-server-express')
 const app = express()
 
 app.use(require('morgan')('dev'))
 app.use(require('body-parser').json())
 app.use(require('cors')())
 
-app.use(
-  '/graphql',
-  ApolloServer.graphqlExpress({
-    schema: require('./schema'),
-  }),
-)
-
-app.use(
-  '/graphiql',
-  ApolloServer.graphiqlExpress({
-    endpointURL: '/graphql',
-  }),
-)
+app.use('/users', require('./api/users'))
+app.use('/authors', require('./api/authors'))
+app.use('/books', require('./api/books'))
+app.use('/book-shelves', require('./api/book-shelves'))
 
 app.use((err, req, res, next) => {
   if (res.headersSent) return next(err)
@@ -26,10 +16,9 @@ app.use((err, req, res, next) => {
   res.json({ error: err.message })
 })
 
-app.start = async port => {
-  return new Promise((resolve, reject) => {
-    app.listen(port, () => resolve())
+app.start = port =>
+  new Promise(resolve => {
+    app.listen(port, resolve)
   })
-}
 
 module.exports = app
