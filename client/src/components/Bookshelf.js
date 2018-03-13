@@ -115,7 +115,7 @@ class Bookshelf extends React.Component {
   }
 }
 
-const AddBookMutation = gql`
+const ADD_BOOK_MUTATION = gql`
   mutation addBookToBookshelf($id: ID!, $bookId: ID!) {
     addBookToBookshelf(id: $id, bookId: $bookId) {
       id
@@ -128,7 +128,7 @@ const AddBookMutation = gql`
   }
 `
 
-const RemoveBookMutation = gql`
+const REMOVE_BOOK_MUTATION = gql`
   mutation removeBookFromBookshelf($id: ID!, $bookId: ID!) {
     removeBookFromBookshelf(id: $id, bookId: $bookId) {
       id
@@ -160,6 +160,6 @@ Bookshelf.fragments = {
 }
 
 export default compose(
-  graphql(AddBookMutation, { name: 'addBook' }),
-  graphql(RemoveBookMutation, { name: 'removeBook' }),
+  graphql(ADD_BOOK_MUTATION, { name: 'addBook' }),
+  graphql(REMOVE_BOOK_MUTATION, { name: 'removeBook' }),
 )(Bookshelf)

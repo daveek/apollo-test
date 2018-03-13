@@ -12,13 +12,13 @@
 
 * Build an Apollo test app which consumes a REST endpoint.
 
-> A mock REST API has been implemented in `~/server`, you can reference `~/server/src/index.js` for a summary of the available resources. For each resource, the standard RESTful CRUD operations are provided.
+> A mock REST API has been implemented in `~/server`; you can reference `~/server/src/index.js` for a summary of the available resources. For each resource, the standard RESTful CRUD operations are provided.
 
 * The GraphQL queries should be unaware of REST dependencies and not be tainted in any way allowing for a clean break when our dependencies migrate to GraphQL.
 
-> All queries inside of the React application are 100% agnostic to the server implementation; they are just your typical GraphQL queries, nothing special. I noticed there were some GraphQL to REST bridges out in the wild, but these seemed to defeat much of the purpose of GraphQL since they leaked API details into the client (i.e., you had to specify resource locations/methods, or they made some assumption about your REST implementation [there's always _something_ different in the real world]).
+> All queries inside of the React application are 100% agnostic to the server implementation; they are just your typical GraphQL queries. I noticed there were some GraphQL to REST bridges out in the wild, but these seemed to defeat much of the purpose of GraphQL since they leaked API details into the client (i.e., you had to specify resource locations/methods, or they made some assumption about your REST implementation [there's always _something_ different in the real world]).
 >
-> My solution took advantage of apollo-link-schema, which allowed you to define on the client what very closely resembles what would be implemented on a GraphQL server: custom resolvers for each field. My original implementation had the client using our own link which handled proxying queries to a schema instance. Upon more research, I discovered that this is _exactly_ what apollo-link-schema does, and so I have deferred to that since this project focuses on utilizing available Apollo links.
+> My solution takes advantage of apollo-link-schema, which allows you to define on the client something very closely resembling a GraphQL server implementation: custom resolvers for each field. My original implementation had the client using our own link which proxied queries to a schema instance. Upon more research, I discovered that this is _exactly_ what apollo-link-schema does, and so I have deferred to that since this project focuses on utilizing available Apollo links.
 
 * There should be minimal contained REST knowledge within the Apollo link chain.
 
@@ -91,20 +91,19 @@ I understand that the inability to wrap the REST API with a server was part of t
 * Absolutely nothing would have to change on client after REST dependencies are migrated
 * Fewer network calls, since server would be responsible for proxying REST API
 
-Note that I considered whether to investigate the ability to intercept just a subset of queries and proxy those to the REST API, but concluded that the limitation of the REST interception is only necessary when we don't have any GraphQL implementation on the server (i.e., this exercise). As soon as a GraphQL server is available, it should assume all proxying responsibility. We could get fancy with [split](https://www.apollographql.com/docs/link/composition.html#directional) from Apollo Link, but I think it's best to make the link chain as homogoneous as possible for all queries.
+Note that I considered whether to implement the ability to intercept just a subset of queries and proxy those to the REST API, but concluded that the limitation of the REST interception is only necessary when we don't have any GraphQL implementation on the server (i.e., this exercise). As soon as a GraphQL server is available, it should assume all proxying responsibility. We could get fancy with [split](https://www.apollographql.com/docs/link/composition.html#directional) from Apollo Link, but I think it's best to make the link chain as homogoneous as possible for all queries.
 
 ### Query Batching
 
-One of my biggest worries with wrapping a REST API in a GraphQL layer was that inefficient queries could hammer the network. Say, for example, you independently transform an array of identifiers into
-individual GraphQL queries for those resources. Without any batching — and assuming none of those records live in cache yet — an http request will be made for each id.
+One of my biggest worries with wrapping a REST API in a GraphQL layer was that inefficient queries could hammer the network. Say, for example, you independently transform an array of identifiers into individual GraphQL queries for those resources. Without any batching — and assuming none of those records live in cache yet — an http request will be made for each id.
 
 > Aside!
 >
 > A traditional GraphQL server is no silver bullet here, but you're far less likely to run into issues at a smaller scale. One common thing to look out for with GraphQL queries is their size, since the whole query is wired to the server (unlike our REST wrapper which just resolved nodes locally).
 >
-> One workaround for this is to use a library such as `apollo-link-persisted-queries`, which will send a hash of your query to the server (a hash being much a much smaller payload). The server keeps track of a mapping of hashes --> queries, and if your hash is recognized it will respond with the result. If not, another request is made with the entire query, which will then be stored as a hash for future requests.
+> One workaround for massive queries is to use a library such as `apollo-link-persisted-queries`, which sends a hash of your query to the server (it being much a much smaller payload). The server keeps track of a mapping of hashes --> queries, and if your hash is recognized it will execute that query and return the result. If the hash isn't known, the server will request that the client make a new request with the entire query and the hash, which will then be stored for future requests.
 
-If I had more time for this demo I would have liked to look for ways to batch these types of requests (presumably with [apollo-link-batch](https://github.com/apollographql/apollo-link/tree/master/packages/apollo-link-batch)). For example, rather than retrieving `/boos/5`, `books/6`, `books/n`, those could be batched into a single request to the server, e.g. `/books?id[]=5&id[]=6&id[]=n`. I'm almost certain this is possible by using the aforementioned link and transforming/grouping similar operations.
+If I had more time for this demo I would have liked to look for ways of batching our REST requests (presumably with [apollo-link-batch](https://github.com/apollographql/apollo-link/tree/master/packages/apollo-link-batch)). For example, rather than retrieving `/boos/5`, `books/6`, `books/n`, those could be batched into a single request to the server, e.g. `/books?id[]=5&id[]=6&id[]=n`. I'm almost certain this is possible by using the aforementioned link and transforming/grouping similar operations.
 
 ### Client Services
 

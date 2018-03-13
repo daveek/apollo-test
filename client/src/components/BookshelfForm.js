@@ -5,8 +5,8 @@ import { graphql } from 'react-apollo'
 
 /**
  * NOTE(zuko): I really wanted to reuse the base Bookshelf component for this,
- * but in the interest of accomplishing the actual goals for this project I
- * opted to forego the refactoring.
+ * but in the interest of time and accomplishing the actual goals for this
+ * project I opted to forego the refactoring.
  */
 class BookshelfForm extends React.Component {
   static propTypes = {
@@ -70,7 +70,6 @@ class BookshelfForm extends React.Component {
   }
 }
 
-// NOTE(zuko): in reality we would actually care about who is creating the bookshelf
 const CreateBookshelfMutation = gql`
   mutation createBookshelf($title: String!, $bookIds: [ID]!) {
     createBookshelf(title: $title, bookIds: $bookIds) {
