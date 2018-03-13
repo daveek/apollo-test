@@ -54,5 +54,5 @@ const BookSearchQuery = gql`
 
 export default graphql(BookSearchQuery, {
   options: { variables: { id: '18' } },
-  props: ({ ownProps, data }) => ({ ...data }),
+  props: ({ data }) => ({ ...data }),
 })(BookSearch)

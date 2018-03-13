@@ -1,19 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { graphql } from 'react-apollo'
+import { compose, graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import BookSearch from './BookSearch'
-import { compose } from 'react-apollo'
+import BookshelfItem from './BookshelfItem'
+import './Bookshelf.css'
 
 class Bookshelf extends React.Component {
   static propTypes = {
     id: PropTypes.string,
     title: PropTypes.string,
     createdBy: PropTypes.object,
-    loading: PropTypes.any,
     updatedAt: PropTypes.number,
     books: PropTypes.arrayOf(PropTypes.object),
     addBook: PropTypes.func.isRequired,
+    removeBook: PropTypes.func.isRequired,
   }
 
   state = {
@@ -29,14 +30,23 @@ class Bookshelf extends React.Component {
     this.setState({ selectedBookId: bookId })
   }
 
-  _onAddBook = () => {
-    this.props.addBook({
+  _onAddBook = async () => {
+    await this.props.addBook({
       variables: {
         id: this.props.id,
         bookId: this.state.selectedBookId,
       },
     })
     this.setState({ selectedBookId: null })
+  }
+
+  _onRemoveBook = async id => {
+    await this.props.removeBook({
+      variables: {
+        id: this.props.id,
+        bookId: id,
+      },
+    })
   }
 
   renderEditTools() {
@@ -66,27 +76,21 @@ class Bookshelf extends React.Component {
 
   render() {
     const { editing } = this.state
-    const { loading, title, createdBy, updatedAt, books = [] } = this.props
-    if (loading) return null
+    const { title, createdBy, updatedAt, books = [] } = this.props
     return (
       <div
-        className="card"
-        style={{
-          boxShadow: '0 2px 5px 0 rgba(0,0,0,.15)',
-          borderTop: '4px solid rgb(84, 32, 210)',
-        }}
+        className={'card bookshelf' + (editing ? ' bookshelf--editing' : '')}
       >
+        <a
+          href="#"
+          className="bookshelf__action"
+          title="Edit this bookshelf"
+          onClick={this._onToggleEditMode}
+        >
+          <i className="fa fa-edit text-primary" />
+        </a>
         <div className="card-body">
-          <div className="d-flex justify-content-between">
-            <h5 className="card-title mb-2">{title}</h5>
-            <a
-              href="#"
-              title="Edit this bookshelf"
-              onClick={this._onToggleEditMode}
-            >
-              <i className="fa fa-edit text-primary" />
-            </a>
-          </div>
+          <h5 className="card-title mb-2">{title}</h5>
           <h6 className="card-subtitle mb-2 text-muted text-small">
             <small>
               Created by: {createdBy.firstName} {createdBy.lastName}
@@ -94,19 +98,52 @@ class Bookshelf extends React.Component {
           </h6>
           <hr />
           {editing && this.renderEditTools()}
-          <ul>{books.map(book => <li key={book.title}>{book.title}</li>)}</ul>
-          <small>
-            Last updated on {new Date(updatedAt).toLocaleDateString()}
-          </small>
+          <ul className="bookshelf__book-list">
+            {books.map(book => (
+              <BookshelfItem
+                key={book.title}
+                {...book}
+                isEditable={editing}
+                onRemove={this._onRemoveBook}
+              />
+            ))}
+          </ul>
+          <small>Last updated on {new Date(updatedAt).toLocaleString()}</small>
         </div>
       </div>
     )
   }
 }
 
-const BookshelfQuery = gql`
-  query Bookshelf($id: ID!) {
-    bookshelf(id: $id) {
+const AddBookMutation = gql`
+  mutation addBookToBookshelf($id: ID!, $bookId: ID!) {
+    addBookToBookshelf(id: $id, bookId: $bookId) {
+      id
+      updatedAt
+      books {
+        id
+        title
+      }
+    }
+  }
+`
+
+const RemoveBookMutation = gql`
+  mutation removeBookFromBookshelf($id: ID!, $bookId: ID!) {
+    removeBookFromBookshelf(id: $id, bookId: $bookId) {
+      id
+      updatedAt
+      books {
+        id
+        title
+      }
+    }
+  }
+`
+
+Bookshelf.fragments = {
+  bookshelf: gql`
+    fragment BookshelfCard on Bookshelf {
       id
       title
       updatedAt
@@ -115,35 +152,14 @@ const BookshelfQuery = gql`
         lastName
       }
       books {
-        id
-        title
+        ...BookItem
       }
     }
-  }
-`
-
-const AddBookMutation = gql`
-  mutation addBookToBookshelf($id: ID!, $bookId: ID!) {
-    addBookToBookshelf(id: $id, bookId: $bookId) {
-      id
-      title
-      books {
-        id
-        title
-      }
-    }
-  }
-`
+    ${BookshelfItem.fragments.book}
+  `,
+}
 
 export default compose(
-  graphql(BookshelfQuery, {
-    options: props => ({ variables: { id: props.id } }),
-    props: ({ data }) => ({
-      loading: !!data.loading,
-      ...data.bookshelf,
-    }),
-  }),
-  graphql(AddBookMutation, {
-    name: 'addBook',
-  }),
+  graphql(AddBookMutation, { name: 'addBook' }),
+  graphql(RemoveBookMutation, { name: 'removeBook' }),
 )(Bookshelf)

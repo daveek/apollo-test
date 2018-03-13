@@ -1,26 +1,72 @@
 import React from 'react'
+import PropTypes from 'prop-type'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import Bookshelf from '../components/Bookshelf'
+import BookshelfForm from '../components/BookshelfForm'
 
 class Dashboard extends React.Component {
+  static propTypes = {
+    bookshelves: PropTypes.arrayOf(PropTypes.object),
+    refetch: PropTypes.func,
+  }
+
+  state = {
+    isCreatingShelf: false,
+  }
+
+  _toggleCreateShelf = () => {
+    this.setState(state => ({ isCreatingShelf: !state.isCreatingShelf }))
+  }
+
   render() {
-    const { data: { bookshelves = [] } } = this.props
+    const { bookshelves = [], refetch } = this.props
+    const { isCreatingShelf } = this.state
+
     return (
       <div className="container">
-        <h2 className="mb-4">Popular Book Shelves</h2>
+        <div className="d-flex align-items-center justify-content-between">
+          <h2 className="heading">Popular Book Shelves</h2>
+          <button
+            disabled={isCreatingShelf}
+            className="btn btn-outline-primary"
+            onClick={this._toggleCreateShelf}
+          >
+            <i className="fa fa-plus mr-2" />
+            Create Shelf
+          </button>
+        </div>
         <div className="card-columns">
-          {bookshelves.map(({ id }) => <Bookshelf key={id} id={id} />)}
+          {isCreatingShelf && (
+            <BookshelfForm
+              onCancel={this._toggleCreateShelf}
+              onSubmit={() => {
+                this._toggleCreateShelf()
+                refetch() // gross, but I'm out of time :(
+              }}
+            />
+          )}
+          {bookshelves.map(shelf => <Bookshelf key={shelf.id} {...shelf} />)}
         </div>
       </div>
     )
   }
 }
 
-export default graphql(gql`
-  query Dashboard {
-    bookshelves {
-      id
+export default graphql(
+  gql`
+    query Dashboard {
+      bookshelves {
+        ...BookshelfCard
+      }
     }
-  }
-`)(Dashboard)
+    ${Bookshelf.fragments.bookshelf}
+  `,
+  {
+    props: ({ data }) => ({
+      bookshelves: data.bookshelves,
+      isLoading: data.loading,
+      refetch: data.refetch,
+    }),
+  },
+)(Dashboard)

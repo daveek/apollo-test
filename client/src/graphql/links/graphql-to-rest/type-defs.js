@@ -1,30 +1,43 @@
 export default `
-  type User {
+  interface Record {
     id: ID!
+    createdAt: Float!
+    updatedAt: Float!
+  }
+
+  type User implements Record {
+    id: ID!
+    createdAt: Float!
+    updatedAt: Float!
     firstName: String
     lastName: String,
     bookshelves: [Bookshelf]
   }
 
-  type Author {
+  type Author implements Record {
     id: ID!
+    createdAt: Float!
+    updatedAt: Float!
     firstName: String
     middleName: String
     lastName: String
     books: [Book]
   }
 
-  type Book {
+  type Book implements Record {
     id: ID!
+    createdAt: Float!
+    updatedAt: Float!
     title: String
     author: Author
   }
 
-  type Bookshelf {
+  type Bookshelf implements Record {
     id: ID!
+    createdAt: Float!
+    updatedAt: Float!
     title: String
     createdBy: User
-    updatedAt: Float
     books: [Book]
   }
 
@@ -40,9 +53,11 @@ export default `
   }
 
   type Mutation {
-    createBookshelf(userId: ID!, title: String!, books: [ID!]): Bookshelf
     addBookToBookshelf(id: ID!, bookId: ID!): Bookshelf
     removeBookFromBookshelf(id: ID!, bookId: ID!): Bookshelf
+    createBook(title: String!, authorId: ID!): Book
+    createAuthor(firstName: String!, lastName: String!, middleName: String): Author
+    createBookshelf(title: String!, bookIds: [ID]!): Bookshelf
   }
 
   schema {

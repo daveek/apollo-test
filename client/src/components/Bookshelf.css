@@ -1,0 +1,51 @@
+/**
+ * Can't override bootstrap defaults since I don't have sass, hence
+ * the double classname for selector weight.
+ */
+.bookshelf.bookshelf {
+  position: relative;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.15);
+  border-top: 4px solid rgb(84, 32, 210);
+}
+
+.bookshelf__book-list {
+  margin: 0 0 1em;
+  padding: 0 0 0 0.25em;
+  list-style: none;
+}
+
+.bookshelf__action {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+
+.book {
+  display: flex;
+  align-items: center;
+}
+
+.book__icon {
+  margin: 0 10px 0 0;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 0.2em;
+}
+
+.book__title {
+  transition: 0.25s opacity;
+}
+
+.book--editable .book__icon {
+  color: rgba(255, 0, 0, 0.65);
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.book--editable .book__icon:hover {
+  cursor: pointer;
+}
+
+.book--editable .book__icon:hover + .book__title {
+  text-decoration: line-through;
+  opacity: 0.5;
+}

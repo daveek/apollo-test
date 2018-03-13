@@ -1,16 +1,15 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Navbar from './Navbar'
 
-class AppLayout extends React.Component {
-  render() {
-    const { children } = this.props
-    return (
-      <div>
-        <Navbar />
-        <main className="mt-4">{children}</main>
-      </div>
-    )
-  }
+const AppLayout = ({ children }) => (
+  <div>
+    <Navbar />
+    <main className="mt-4">{children}</main>
+  </div>
+)
+AppLayout.propTypes = {
+  children: PropTypes.node,
 }
 
 export default AppLayout

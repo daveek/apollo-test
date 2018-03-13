@@ -1,0 +1,20 @@
+.heading {
+  color: rgb(97, 33, 169);
+  margin: 0 0 0.5em;
+}
+
+html,
+body {
+  height: 100%;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/**
+ * Found a bug (??) on Chrome where any overflow from a column will wrap
+ * to the top of the next column. Does not appear to happen on Firefox.
+ * As much as I'd love to debug this further, these are Bootstrap's styles
+ * and I'm short on time. This is a horribly hacky fix, please just ignore.
+ */
+.card-columns .card:last-child {
+  margin-bottom: 50%;
+}

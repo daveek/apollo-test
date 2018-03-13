@@ -11,6 +11,7 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.0.0",
     "graphql": "^0.12.3",
+    "graphql-anywhere": "^4.1.6",
     "graphql-tag": "^2.6.1",
     "graphql-tools": "^2.21.0",
     "lodash": "^4.17.4",

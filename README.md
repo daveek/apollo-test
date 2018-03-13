@@ -9,10 +9,26 @@
 ## Project Requirements
 
 * Build an Apollo test app which consumes a REST endpoint.
+
+> A mock REST API has been implemented in `~/server`, you can reference `~/server/src/index.js` for a summary of the available resources. For each resource, the standard RESTful CRUD operations are provided.
+
 * The GraphQL queries should be unaware of REST dependencies and not be tainted in any way allowing for a clean break when our dependencies migrate to GraphQL.
+
+> All queries inside of the React application are 100% agnostic to the server implementation; they are just your typical GraphQL queries, nothing special. I noticed there were some GraphQL to REST bridges out in the wild, but these seemed to defeat much of the purpose of GraphQL since they leaked API details into the client (i.e., you had to specify resource locations/methods, or they made some assumption about your REST implementation [there's always _something_ different in the real world]).
+>
+> My solution took advantage of apollo-link-schema, which allowed you to define on the client what very closely resembles what would be implemented on a GraphQL server: custom resolvers for each field. My original implementation had the client using our own link which handled proxying queries to a schema instance. Upon more research, I discovered that this is _exactly_ what apollo-link-schema does, and so I have deferred to that since this project focuses on utilizing available Apollo links.
+
 * There should be minimal contained REST knowledge within the Apollo link chain.
+
+> See above for more. There is in fact no REST knowledge in the chain, ignoring of course our single link which handles resolving queries against our own schema. As soon as a GraphQL server is available, all the client has to do is replace the REST link with a simpler one; for example: apollo-link-http. No queries have to change whatsoever.
+
 * There should be no errors resulting from missing \_\_typename fields
+
+> There are none, hooray!
+
 * Any fields that are queried should be backfilled with null when the REST endpoint responds with undefined.
+
+> Unfortunately I'm not too sure what the intention of this is. In trying to clarify it, it sounds like this requirement mandates that any fields specified in a GraphQL type should resolve to null if they are not provided by the REST API. If this understanding is correct, then you'll find the correct implementation here. If a node in the graph is unable to be resolved, an error is set as would be expected with GraphQL.
 
 ## Setup
 
