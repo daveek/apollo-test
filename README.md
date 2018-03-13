@@ -4,6 +4,8 @@
 * [Setup](#setup)
 * [Structure](#structure)
 * [Notes](#notes)
+  * [Wrap REST API on Server](#wrap-rest-api-on-server)
+  * [Query Batching](#query-batching)
   * [Client Services](#client-services)
 
 ## Project Requirements
@@ -28,7 +30,7 @@
 
 * Any fields that are queried should be backfilled with null when the REST endpoint responds with undefined.
 
-> Unfortunately I'm not too sure what the intention of this is. In trying to clarify it, it sounds like this requirement mandates that any fields specified in a GraphQL type should resolve to null if they are not provided by the REST API. If this understanding is correct, then you'll find the correct implementation here. If a node in the graph is unable to be resolved, an error is set as would be expected with GraphQL.
+> In trying to clarify to clarify the intention of this requirement, it sounds like it mandates that any fields specified in a GraphQL type should resolve to null if they are not provided by the REST API. If this understanding is correct, then you'll find the correct implementation here. If a node in the graph is unable to be resolved, an error is set as would be expected with GraphQL.
 
 ## Setup
 
@@ -82,12 +84,28 @@ Workspaces provide first-class support for managing multiple packages in a singl
 
 ## Notes
 
-* Would prefer to implement REST wrapper on server if possible in real world
-  * Absolutely nothing would have to change on client after REST dependencies are migrated
-  * Fewer network calls, since server would be responsible for proxying REST API
-* Considered whether to investigate the ability to intercept just a subset of queries and proxy those to the REST API. Concluded that the limitation of the REST interception is only necessary when we don't have any GraphQL implementation on the server (i.e., this exercise); as soon as a GraphQL server is available, it should assume all proxying responsibility. We could get fancy with [split](https://www.apollographql.com/docs/link/composition.html#directional) from Apollo Link, but I think it's best to avoid mixing muddying the query logic too much.
+### Wrap REST API on Server
+
+I understand that the inability to wrap the REST API with a server was part of the restrictions for this demo, but it's immediately where my mind went so I wanted to at least make a note of why it would be preferable if it were possible:
+
+* Absolutely nothing would have to change on client after REST dependencies are migrated
+* Fewer network calls, since server would be responsible for proxying REST API
+
+Note that I considered whether to investigate the ability to intercept just a subset of queries and proxy those to the REST API, but concluded that the limitation of the REST interception is only necessary when we don't have any GraphQL implementation on the server (i.e., this exercise). As soon as a GraphQL server is available, it should assume all proxying responsibility. We could get fancy with [split](https://www.apollographql.com/docs/link/composition.html#directional) from Apollo Link, but I think it's best to make the link chain as homogoneous as possible for all queries.
+
+### Query Batching
+
+One of my biggest worries with wrapping a REST API in a GraphQL layer was that inefficient queries could hammer the network. Say, for example, you independently transform an array of identifiers into
+individual GraphQL queries for those resources. Without any batching — and assuming none of those records live in cache yet — an http request will be made for each id.
+
+> Aside!
+>
+> A traditional GraphQL server is no silver bullet here, but you're far less likely to run into issues at a smaller scale. One common thing to look out for with GraphQL queries is their size, since the whole query is wired to the server (unlike our REST wrapper which just resolved nodes locally).
+>
+> One workaround for this is to use a library such as `apollo-link-persisted-queries`, which will send a hash of your query to the server (a hash being much a much smaller payload). The server keeps track of a mapping of hashes --> queries, and if your hash is recognized it will respond with the result. If not, another request is made with the entire query, which will then be stored as a hash for future requests.
+
+If I had more time for this demo I would have liked to look for ways to batch these types of requests (presumably with [apollo-link-batch](https://github.com/apollographql/apollo-link/tree/master/packages/apollo-link-batch)). For example, rather than retrieving `/boos/5`, `books/6`, `books/n`, those could be batched into a single request to the server, e.g. `/books?id[]=5&id[]=6&id[]=n`. I'm almost certain this is possible by using the aforementioned link and transforming/grouping similar operations.
 
 ### Client Services
 
-* Emulate how remote resources might already be wrapped in a real-world application
-* Hide implementation details (e.g. network fetching logic) in a sane interface; consumers simply receive promises and aren't considered about serialization, parsing, etc.
+The modules in `~/client/src/services` emulate how remote resources might already be wrapped in a real-world application. There's nothing special to them beyond their usual purpose of hiding implementation details (e.g. network fetching logic) in a sane interface; consumers simply receive promises and aren't considered about serialization, parsing, etc.
